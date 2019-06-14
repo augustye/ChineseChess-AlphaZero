@@ -40,7 +40,7 @@ class PlayWithHuman:
         self.load_model()
         self.pipe = self.model.get_pipes()
         self.ai = CChessPlayer(self.config, search_tree=defaultdict(VisitState), pipes=self.pipe,
-                              enable_resign=True, debugging=False)
+                              enable_resign=True, debugging=True)
         self.human_move_first = human_first
 
         labels = ActionLabelsRed
@@ -83,7 +83,19 @@ class PlayWithHuman:
                     break
                 self.env.step(action)
                 x_list = "ABCDEFGHI"
-                print(f"AI选择移动 {x_list[int(action[0])]+action[1]} -> {x_list[int(action[2])]+action[3]}")
+                key = self.env.get_state()
+                p, v = self.ai.debug[key]
+                print(f"当前局势评估: {v:.3f}")
+                print(f'MCTS搜索次数：{self.config.play.simulation_num_per_move}')
+                print(f"AI选择移动 {x_list[int(action[0])]+action[1]} -> {x_list[int(action[2])]+action[3]}\n")
+                labels = ["    着法    ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
+                print(f"{labels[0]}{labels[1]}{labels[2]}{labels[3]}")
+                for move, action_state in self.ai.search_results.items():
+                    value1 = f"　{x_list[8-int(move[0])]}{9-int(move[1])} -> {x_list[8-int(move[2])]}{9-int(move[3])}　"
+                    value2 = f"　　{action_state[0]:3d}　　"
+                    value3 = f"　　{action_state[1]:5.2f}　　"
+                    value4 = f"　　{action_state[2]:5.2f}　　"
+                    print(f"{value1}{value2}{value3}{value4}")
                 self.env.board.print_to_cl()
 
         self.ai.close()

@@ -383,7 +383,7 @@ class Chessboard(object):
         has_two, mark = self.check_two_chesses_in_one_row(chess, old_x, old_y)
         if has_two:
             self.record += mark
-        self.record += chess.name_cn[1]
+        self.record += chess.name_cn
         # horizontal move
         if old_y == y:
             if not self.is_red_turn:
@@ -500,7 +500,7 @@ class Chessboard(object):
         has_two, mark = self.check_two_chesses_in_one_row(chess, old_x, old_y)
         if has_two:
             record += mark
-        record += chess.name_cn[1]
+        record += chess.name_cn
         # horizontal move
         if old_y == y:
             if not self.is_red_turn:
