@@ -61,9 +61,9 @@ class PlayWithHuman:
                     chessman = self.env.board.chessmans[x][y]
                     if chessman != None and chessman.is_red == self.env.board.is_red_turn:
                         is_correct_chessman = True
-                        print(f"当前棋子为{chessman.name_cn}，可以落子的位置有：")
-                        for point in chessman.moving_list:
-                            print(point.x, point.y)
+                        print(f"当前棋子为{chessman.name_cn}，有%d个可以落子的位置"%(len(chessman.moving_list)))
+                        #for point in chessman.moving_list:
+                        #    print(point.x, point.y)
                     else:
                         print("没有找到此名字的棋子或未轮到此方走子")
                 while not is_correct_position:
