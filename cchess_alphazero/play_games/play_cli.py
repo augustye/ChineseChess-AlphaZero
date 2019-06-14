@@ -57,8 +57,11 @@ class PlayWithHuman:
                 while not is_correct_chessman:
                     title = "请输入棋子位置: "
                     input_chessman_pos = input(title)
-                    x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
-                    chessman = self.env.board.chessmans[x][y]
+                    try:
+                        x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
+                        chessman = self.env.board.chessmans[x][y]
+                    except:
+                        pass
                     if chessman != None and chessman.is_red == self.env.board.is_red_turn:
                         is_correct_chessman = True
                         print(f"当前棋子为{chessman.name_cn}")
@@ -69,33 +72,41 @@ class PlayWithHuman:
                 while not is_correct_position:
                     title = "请输入落子的位置: "
                     input_chessman_pos = input(title)
-                    x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
-                    is_correct_position = chessman.move(x, y)
+                    try:
+                        x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
+                        is_correct_position = chessman.move(x, y)
+                    except:
+                        pass
                     if is_correct_position:
                         self.env.board.print_to_cl()
                         self.env.board.clear_chessmans_moving_list()
             else:
+                self.ai.search_results = {}
                 action, policy = self.ai.action(self.env.get_state(), self.env.num_halfmoves)
                 if not self.env.red_to_move:
                     action = flip_move(action)
                 if action is None:
                     print("AI投降了!")
                     break
-                self.env.step(action)
                 x_list = "ABCDEFGHI"
                 key = self.env.get_state()
                 p, v = self.ai.debug[key]
-                print(f"当前局势评估: {v:.3f}")
+                chessman = self.env.board.chessmans[int(action[0])][int(action[1])]
+                print(f"当前局势评估：{v:.3f}")
                 print(f'MCTS搜索次数：{self.config.play.simulation_num_per_move}')
-                print(f"AI选择移动 {x_list[int(action[0])]+action[1]} -> {x_list[int(action[2])]+action[3]}\n")
-                labels = ["    着法    ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
+                print(f"AI选择移动{chessman.name_cn}：{x_list[int(action[0])]+action[1]} -> {x_list[int(action[2])]+action[3]}\n")
+                labels = ["     着法    ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
                 print(f"{labels[0]}{labels[1]}{labels[2]}{labels[3]}")
                 for move, action_state in self.ai.search_results.items():
-                    value1 = f"　{x_list[8-int(move[0])]}{9-int(move[1])} -> {x_list[8-int(move[2])]}{9-int(move[3])}　"
+                    if not self.env.red_to_move:
+                        move = flip_move(move)
+                    chessman = self.env.board.chessmans[int(move[0])][int(move[1])]
+                    value1 = f"{chessman.name_cn}　{x_list[int(move[0])]}{int(move[1])} -> {x_list[int(move[2])]}{int(move[3])} "
                     value2 = f"　　{action_state[0]:3d}　　"
                     value3 = f"　　{action_state[1]:5.2f}　　"
                     value4 = f"　　{action_state[2]:5.2f}　　"
                     print(f"{value1}{value2}{value3}{value4}")
+                self.env.step(action)
                 self.env.board.print_to_cl()
 
         self.ai.close()
