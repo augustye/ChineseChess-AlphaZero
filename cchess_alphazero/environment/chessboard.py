@@ -320,7 +320,7 @@ class Chessboard(object):
 
     def print_to_cl(self, is_print = True):
         screen = "\r\n"
-        screen += "  ０１２３４５６７８\r\n"
+        screen += "  ＡＢＣＤＥＦＧＨＩ\r\n"
         screen += "  －－－－－－－－－\r\n"
         for i in range(9, -1, -1):
             screen += str(i) + "|"
@@ -331,7 +331,7 @@ class Chessboard(object):
                     screen += colored(u"＋", 'white')
             screen += "|" + str(i) + "\r\n" 
         screen += "  －－－－－－－－－\r\n"
-        screen += "  ０１２３４５６７８\r\n"
+        screen += "  ＡＢＣＤＥＦＧＨＩ\r\n"
         if is_print:
             print(screen)
         else:

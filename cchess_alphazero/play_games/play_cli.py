@@ -57,11 +57,11 @@ class PlayWithHuman:
                 while not is_correct_chessman:
                     title = "请输入棋子位置: "
                     input_chessman_pos = input(title)
-                    x, y = int(input_chessman_pos[0]), int(input_chessman_pos[1])
+                    x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
                     chessman = self.env.board.chessmans[x][y]
                     if chessman != None and chessman.is_red == self.env.board.is_red_turn:
                         is_correct_chessman = True
-                        print(f"当前棋子为{chessman.name_cn}，有%d个可以落子的位置"%(len(chessman.moving_list)))
+                        print(f"当前棋子为{chessman.name_cn}")
                         #for point in chessman.moving_list:
                         #    print(point.x, point.y)
                     else:
@@ -69,7 +69,7 @@ class PlayWithHuman:
                 while not is_correct_position:
                     title = "请输入落子的位置: "
                     input_chessman_pos = input(title)
-                    x, y = int(input_chessman_pos[0]), int(input_chessman_pos[1])
+                    x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
                     is_correct_position = chessman.move(x, y)
                     if is_correct_position:
                         self.env.board.print_to_cl()
@@ -82,7 +82,8 @@ class PlayWithHuman:
                     print("AI投降了!")
                     break
                 self.env.step(action)
-                print(f"AI选择移动 {action}")
+                x_list = "ABCDEFGHI"
+                print(f"AI选择移动 {x_list[int(action[0])]+action[1]} -> {x_list[int(action[2])]+action[3]}")
                 self.env.board.print_to_cl()
 
         self.ai.close()
