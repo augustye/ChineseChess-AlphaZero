@@ -1,4 +1,5 @@
 import codecs
+import os
 
 from cchess_alphazero.environment.lookup_tables import Winner
 from cchess_alphazero.environment.chessman import *
@@ -320,18 +321,21 @@ class Chessboard(object):
 
     def print_to_cl(self, is_print = True):
         screen = "\r\n"
-        screen += "  ＡＢＣＤＥＦＧＨＩ\r\n"
-        screen += "  －－－－－－－－－\r\n"
+        screen += colored(u" ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
         for i in range(9, -1, -1):
-            screen += str(i) + "|"
+            screen += colored(str(i), 'white') 
             for j in range(9):
                 if self.__chessmans[j][i] != None:
                     screen += self.__chessmans[j][i].name_cn
+                elif i == 5:
+                    screen += colored(u"┻" if "COLAB_GPU" in os.environ else u"┴─", 'white')
+                elif i == 4:
+                    screen += colored(u"┳" if "COLAB_GPU" in os.environ else u"┬─", 'white')
                 else:
-                    screen += colored(u"＋", 'white')
-            screen += "|" + str(i) + "\r\n" 
-        screen += "  －－－－－－－－－\r\n"
-        screen += "  ＡＢＣＤＥＦＧＨＩ\r\n"
+                    screen += colored(u"╋" if "COLAB_GPU" in os.environ else u"┼─", 'white')
+            screen += colored(str(i), 'white') 
+            screen += "\r\n" 
+        screen += colored(u" ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
         if is_print:
             print(screen)
         else:
