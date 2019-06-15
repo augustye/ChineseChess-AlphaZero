@@ -1,3 +1,6 @@
+import os
+import tensorflow as tf
+
 from collections import defaultdict
 from logging import getLogger
 
@@ -31,10 +34,20 @@ class PlayWithHuman:
         self.human_move_first = True
 
     def load_model(self):
+        if "COLAB_TPU_ADDR" not in os.environ:
+            return self._load_model()
+        else:
+            print("build on TPU...")
+            resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'])
+            tf.contrib.distribute.initialize_tpu_system(resolver)
+            strategy = tf.contrib.distribute.TPUStrategy(resolver)
+            with strategy.scope():
+                return self._load_model()
+
+    def _load_model(self):
         self.model = CChessModel(self.config)
         if self.config.opts.new or not load_best_model_weight(self.model):
             self.model.build()
-
 
     def human_move(self):
         self.env.board.calc_chessmans_moving_list()
