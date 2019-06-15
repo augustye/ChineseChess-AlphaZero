@@ -35,6 +35,36 @@ class PlayWithHuman:
         if self.config.opts.new or not load_best_model_weight(self.model):
             self.model.build()
 
+
+    def human_move(self):
+        self.env.board.calc_chessmans_moving_list()
+        while True:
+            possible_move_list = []
+            title = "请输入着法: "
+            input_move_cn = input(title)
+            for name in self.env.board.chessmans_hash:
+                chessman = self.env.board.chessmans_hash[name]
+                if chessman.is_red != self.env.red_to_move:
+                    continue
+                name_cn = chessman.name_cn[-5]
+                if name_cn in input_move_cn:
+                    p1 = chessman.position
+                    for p2 in chessman.moving_list:
+                        if not self.env.red_to_move:
+                            move_cn = self.env.board.make_single_record(8-p1.x, 9-p1.y, 8-p2.x, 9-p2.y)
+                        else: 
+                            move_cn = self.env.board.make_single_record(p1.x, p1.y, p2.x, p2.y)
+                        possible_move_list.append(move_cn)
+                        if move_cn == input_move_cn:
+                            chessman.move(p2.x, p2.y)
+                            self.env.board.print_to_cl()
+                            self.env.board.clear_chessmans_moving_list()
+                            return
+            if len(possible_move_list) == 0:
+                print("没有这个棋子")
+            else:
+                print("着法不对，可能的着法为:\n" + "\n".join(possible_move_list))
+
     def start(self, human_first=True):
         self.env.reset()
         self.load_model()
@@ -43,43 +73,10 @@ class PlayWithHuman:
                               enable_resign=True, debugging=True)
         self.human_move_first = human_first
 
-        labels = ActionLabelsRed
-        labels_n = len(ActionLabelsRed)
-
         self.env.board.print_to_cl()
-
         while not self.env.board.is_end():
             if human_first == self.env.red_to_move:
-                self.env.board.calc_chessmans_moving_list()
-                is_correct_chessman = False
-                is_correct_position = False
-                chessman = None
-                while not is_correct_chessman:
-                    title = "请输入棋子位置: "
-                    input_chessman_pos = input(title)
-                    try:
-                        x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
-                        chessman = self.env.board.chessmans[x][y]
-                    except:
-                        pass
-                    if chessman != None and chessman.is_red == self.env.board.is_red_turn:
-                        is_correct_chessman = True
-                        print(f"当前棋子为{chessman.name_cn}")
-                        #for point in chessman.moving_list:
-                        #    print(point.x, point.y)
-                    else:
-                        print("没有找到此名字的棋子或未轮到此方走子")
-                while not is_correct_position:
-                    title = "请输入落子的位置: "
-                    input_chessman_pos = input(title)
-                    try:
-                        x, y = "ABCDEFGHI".index(input_chessman_pos[0]), int(input_chessman_pos[1])
-                        is_correct_position = chessman.move(x, y)
-                    except:
-                        pass
-                    if is_correct_position:
-                        self.env.board.print_to_cl()
-                        self.env.board.clear_chessmans_moving_list()
+                self.human_move()
             else:
                 self.ai.search_results = {}
                 action, policy = self.ai.action(self.env.get_state(), self.env.num_halfmoves)
@@ -88,20 +85,16 @@ class PlayWithHuman:
                 if action is None:
                     print("AI投降了!")
                     break
-                x_list = "ABCDEFGHI"
                 key = self.env.get_state()
                 p, v = self.ai.debug[key]
                 chessman = self.env.board.chessmans[int(action[0])][int(action[1])]
                 print(f"当前局势评估：{v:.3f}")
                 print(f'MCTS搜索次数：{self.config.play.simulation_num_per_move}')
-                print(f"AI选择移动{chessman.name_cn}：{x_list[int(action[0])]+action[1]} -> {x_list[int(action[2])]+action[3]}\n")
-                labels = ["     着法    ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
+                labels = ["着法      ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
                 print(f"{labels[0]}{labels[1]}{labels[2]}{labels[3]}")
                 for move, action_state in self.ai.search_results.items():
-                    if not self.env.red_to_move:
-                        move = flip_move(move)
-                    chessman = self.env.board.chessmans[int(move[0])][int(move[1])]
-                    value1 = f"{chessman.name_cn}　{x_list[int(move[0])]}{int(move[1])} -> {x_list[int(move[2])]}{int(move[3])} "
+                    move_cn = self.env.board.make_single_record(int(move[0]), int(move[1]), int(move[2]), int(move[3]))
+                    value1 = f"{move_cn}\t"
                     value2 = f"　　{action_state[0]:3d}　　"
                     value3 = f"　　{action_state[1]:5.2f}　　"
                     value4 = f"　　{action_state[2]:5.2f}　　"

@@ -324,9 +324,8 @@ class Chessboard(object):
     def print_to_cl(self, is_print = True):
         is_colab = "COLAB_GPU" in os.environ
         screen = "\r\n"
-        screen += colored(u"　ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
+        screen += colored(u"１２３４５６７８９\r\n", 'white')
         for i in range(9, -1, -1):
-            screen += colored(u"０１２３４５６７８９"[i], 'white') 
             for j in range(9):
                 if self.__chessmans[j][i] != None:
                     screen += self.__chessmans[j][i].name_cn
@@ -351,10 +350,8 @@ class Chessboard(object):
                         screen += colored(u"┥" if is_colab else u"┤ ", 'white')
                     else:
                         screen += colored(u"┙" if is_colab else u"┘ ", 'white')
-
-            screen += colored(u"０１２３４５６７８９"[i], 'white') 
             screen += "\r\n" 
-        screen += colored(u"　ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
+        screen += colored(u"九八七六五四三二一\r\n", 'white')
         if is_print:
             print(screen)
         else:
@@ -406,7 +403,7 @@ class Chessboard(object):
         has_two, mark = self.check_two_chesses_in_one_row(chess, old_x, old_y)
         if has_two:
             self.record += mark
-        self.record += chess.name_cn
+        self.record += chess.name_cn[-5]
         # horizontal move
         if old_y == y:
             if not self.is_red_turn:
@@ -523,7 +520,7 @@ class Chessboard(object):
         has_two, mark = self.check_two_chesses_in_one_row(chess, old_x, old_y)
         if has_two:
             record += mark
-        record += chess.name_cn
+        record += chess.name_cn[-5]
         # horizontal move
         if old_y == y:
             if not self.is_red_turn:
