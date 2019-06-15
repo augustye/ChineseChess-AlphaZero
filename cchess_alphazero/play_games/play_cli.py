@@ -66,11 +66,12 @@ class PlayWithHuman:
                 print("着法不对，可能的着法为:\n" + "\n".join(possible_move_list))
 
     def get_ai_action(self):
+        side = "红方" if self.env.red_to_move else "黑方"
+        print(f"{side}着法搜索中...")
         self.ai.search_results = {}
         action, policy = self.ai.action(self.env.get_state(), self.env.num_halfmoves)
         key = self.env.get_state()
         p, v = self.ai.debug[key]
-        side = "红方" if self.env.red_to_move else "黑方"
         print(f"{side}局势评估：{v:.3f}")
         print(f'MCTS搜索次数：{self.config.play.simulation_num_per_move}')
         labels = ["着法      ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
