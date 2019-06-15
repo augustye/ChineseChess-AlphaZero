@@ -321,7 +321,7 @@ class Chessboard(object):
 
     def print_to_cl(self, is_print = True):
         screen = "\r\n"
-        screen += colored(u" ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
+        screen += colored(u"　ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
         for i in range(9, -1, -1):
             screen += colored(u"０１２３４５６７８９"[i], 'white') 
             for j in range(9):
@@ -335,7 +335,7 @@ class Chessboard(object):
                     screen += colored(u"┼" if "COLAB_GPU" in os.environ else u"┼─", 'white')
             screen += colored(u"０１２３４５６７８９"[i], 'white') 
             screen += "\r\n" 
-        screen += colored(u" ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
+        screen += colored(u"　ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
         if is_print:
             print(screen)
         else:
