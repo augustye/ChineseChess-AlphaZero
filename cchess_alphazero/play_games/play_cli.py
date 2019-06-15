@@ -38,14 +38,6 @@ class PlayWithHuman:
         if self.config.opts.new or not load_best_model_weight(self.model):
             self.model.build()
 
-        if "COLAB_TPU_ADDR" in os.environ:
-            self.model.model = tf.contrib.tpu.keras_to_tpu_model(
-                self.model.model,
-                strategy=tf.contrib.tpu.TPUDistributionStrategy(
-                    tf.contrib.cluster_resolver.TPUClusterResolver(tpu='grpc://' + os.environ['COLAB_TPU_ADDR'])
-                )
-            )
-
     def human_move(self):
         self.env.board.calc_chessmans_moving_list()
         while True:
