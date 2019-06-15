@@ -130,7 +130,7 @@ class SelfPlayWorker:
                 break
             # if self.config.opts.log_move:
             #     logger.info(f"Process{self.pid} Playing: {turns % 2}, action: {action}, time: {(end_time - start_time):.1f}s")
-            print(f"Process{self.pid} Playing: {turns % 2}, action: {action}, time: {(end_time - start_time):.1f}s")
+            # logger.info(f"Process{self.pid} Playing: {turns % 2}, action: {action}, time: {(end_time - start_time):.1f}s")
             history.append(action)
             # policys.append(policy)
             try:
@@ -213,6 +213,7 @@ class SelfPlayWorker:
         return v, turns, state, store
 
     def save_play_data(self, idx, data):
+        print("save_play_data")
         self.buffer += data
 
         if not idx % self.config.play_data.nb_game_in_file == 0:
