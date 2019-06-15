@@ -30,6 +30,16 @@ class CChessModel:
         self.api = None
 
     def build(self):
+        if "COLAB_TPU_ADDR"  not in os.environ:
+            return self._build()
+        else:
+            resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'])
+            tf.contrib.distribute.initialize_tpu_system(resolver)
+            strategy = tf.contrib.distribute.TPUStrategy(resolver)
+            with strategy.scope():
+                return self._build()
+
+    def _build(self):
         mc = self.config.model
         in_x = x = Input((14, 10, 9)) # 14 x 10 x 9
 
