@@ -14,7 +14,7 @@ def set_session_config(per_process_gpu_memory_fraction=None, allow_growth=None, 
     if "COLAB_TPU_ADDR" in os.environ:
         tpu_address = 'grpc://' + os.environ['COLAB_TPU_ADDR']
         print('Init TPU session with TPU address:', tpu_address)
-        sess = tf.Session(tpu_address)
+        sess = tf.Session(tpu_address, config=tf.ConfigProto(log_device_placement=True))
         return K.set_session(sess)
 
     config = tf.ConfigProto(
