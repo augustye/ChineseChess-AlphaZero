@@ -38,7 +38,7 @@ class PlayWithHuman:
             return self._load_model()
         else:
             print("build on TPU...")
-            resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'])
+            resolver = tf.contrib.cluster_resolver.TPUClusterResolver('grpc://' + os.environ['COLAB_TPU_ADDR'], job_name='tpu_worker')
             tf.contrib.distribute.initialize_tpu_system(resolver)
             strategy = tf.contrib.distribute.TPUStrategy(resolver)
             with strategy.scope():
