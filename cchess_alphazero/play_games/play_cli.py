@@ -65,6 +65,25 @@ class PlayWithHuman:
             else:
                 print("着法不对，可能的着法为:\n" + "\n".join(possible_move_list))
 
+    def get_ai_action(self):
+        self.ai.search_results = {}
+        action, policy = self.ai.action(self.env.get_state(), self.env.num_halfmoves)
+        key = self.env.get_state()
+        p, v = self.ai.debug[key]
+        side = "红方" if self.env.red_to_move else "黑方"
+        print(f"{side}局势评估：{v:.3f}")
+        print(f'MCTS搜索次数：{self.config.play.simulation_num_per_move}')
+        labels = ["着法      ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
+        print(f"{labels[0]}{labels[1]}{labels[2]}{labels[3]}")
+        for move, action_state in self.ai.search_results.items():
+            move_cn = self.env.board.make_single_record(int(move[0]), int(move[1]), int(move[2]), int(move[3]))
+            value1 = f"{move_cn}\t"
+            value2 = f"　　{action_state[0]:3d}　　"
+            value3 = f"　　{action_state[1]:5.2f}　　"
+            value4 = f"　　{action_state[2]:5.2f}　　"
+            print(f"{value1}{value2}{value3}{value4}")
+        return action
+
     def start(self, human_first=True):
         self.env.reset()
         self.load_model()
@@ -76,29 +95,15 @@ class PlayWithHuman:
         self.env.board.print_to_cl()
         while not self.env.board.is_end():
             if human_first == self.env.red_to_move:
+                action = self.get_ai_action()
                 self.human_move()
             else:
-                self.ai.search_results = {}
-                action, policy = self.ai.action(self.env.get_state(), self.env.num_halfmoves)
+                action = self.get_ai_action()
                 if not self.env.red_to_move:
                     action = flip_move(action)
                 if action is None:
                     print("AI投降了!")
                     break
-                key = self.env.get_state()
-                p, v = self.ai.debug[key]
-                chessman = self.env.board.chessmans[int(action[0])][int(action[1])]
-                print(f"当前局势评估：{v:.3f}")
-                print(f'MCTS搜索次数：{self.config.play.simulation_num_per_move}')
-                labels = ["着法      ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
-                print(f"{labels[0]}{labels[1]}{labels[2]}{labels[3]}")
-                for move, action_state in self.ai.search_results.items():
-                    move_cn = self.env.board.make_single_record(int(move[0]), int(move[1]), int(move[2]), int(move[3]))
-                    value1 = f"{move_cn}\t"
-                    value2 = f"　　{action_state[0]:3d}　　"
-                    value3 = f"　　{action_state[1]:5.2f}　　"
-                    value4 = f"　　{action_state[2]:5.2f}　　"
-                    print(f"{value1}{value2}{value3}{value4}")
                 self.env.step(action)
                 self.env.board.print_to_cl()
 
