@@ -328,11 +328,11 @@ class Chessboard(object):
                 if self.__chessmans[j][i] != None:
                     screen += self.__chessmans[j][i].name_cn
                 elif i == 5:
-                    screen += colored(u"┴" if "COLAB_GPU" in os.environ else u"┴─", 'white')
+                    screen += colored(u"┷" if "COLAB_GPU" in os.environ else u"┴─", 'white')
                 elif i == 4:
-                    screen += colored(u"┬" if "COLAB_GPU" in os.environ else u"┬─", 'white')
+                    screen += colored(u"┯" if "COLAB_GPU" in os.environ else u"┬─", 'white')
                 else:
-                    screen += colored(u"┼" if "COLAB_GPU" in os.environ else u"┼─", 'white')
+                    screen += colored(u"┿" if "COLAB_GPU" in os.environ else u"┼─", 'white')
             screen += colored(u"０１２３４５６７８９"[i], 'white') 
             screen += "\r\n" 
         screen += colored(u"　ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
