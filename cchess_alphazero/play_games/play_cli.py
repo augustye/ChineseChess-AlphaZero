@@ -1,4 +1,5 @@
 import os
+import time
 import tensorflow as tf
 
 from collections import defaultdict
@@ -68,6 +69,7 @@ class PlayWithHuman:
                 print("着法不对，可能的着法为:\n" + "\n".join(possible_move_list))
 
     def get_ai_action(self):
+        start_time = time.time()
         side = "红方" if self.env.red_to_move else "黑方"
         print(f"{side}着法搜索中...")
         self.ai.search_results = {}
@@ -76,11 +78,12 @@ class PlayWithHuman:
         p, v = self.ai.debug[key]
         print(f"{side}局势评估：{v:.3f}")
         print(f'MCTS搜索次数：{self.config.play.simulation_num_per_move}')
-        labels = ["着法      ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
+        print(f"搜索用时: {time.time()-start_time:5.2f}")
+        labels = ["　着法　  ", " 访问计数  ", "  动作价值   ", "  先验概率   "] 
         print(f"{labels[0]}{labels[1]}{labels[2]}{labels[3]}")
         for move, action_state in self.ai.search_results.items():
             move_cn = self.env.board.make_single_record(int(move[0]), int(move[1]), int(move[2]), int(move[3]))
-            value1 = f"{move_cn}\t"
+            value1 = f"{move_cn}  "
             value2 = f"　　{action_state[0]:3d}　　"
             value3 = f"　　{action_state[1]:5.2f}　　"
             value4 = f"　　{action_state[2]:5.2f}　　"
