@@ -93,6 +93,7 @@ class SelfPlayWorker:
             sleep(random())
 
     def start_game(self, idx, search_tree):
+        print("start_game")
         pipes = self.cur_pipes.pop()
 
         if not self.config.play.share_mtcs_info_in_self_play or \
@@ -129,7 +130,7 @@ class SelfPlayWorker:
                 break
             # if self.config.opts.log_move:
             #     logger.info(f"Process{self.pid} Playing: {turns % 2}, action: {action}, time: {(end_time - start_time):.1f}s")
-            logger.info(f"Process{self.pid} Playing: {turns % 2}, action: {action}, time: {(end_time - start_time):.1f}s")
+            print(f"Process{self.pid} Playing: {turns % 2}, action: {action}, time: {(end_time - start_time):.1f}s")
             history.append(action)
             # policys.append(policy)
             try:
