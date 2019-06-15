@@ -319,7 +319,10 @@ class Chessboard(object):
                 else:
                     count += 1
 
+
+
     def print_to_cl(self, is_print = True):
+        is_colab = "COLAB_GPU" in os.environ
         screen = "\r\n"
         screen += colored(u"　ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
         for i in range(9, -1, -1):
@@ -327,12 +330,28 @@ class Chessboard(object):
             for j in range(9):
                 if self.__chessmans[j][i] != None:
                     screen += self.__chessmans[j][i].name_cn
-                elif i == 5:
-                    screen += colored(u"┷" if "COLAB_GPU" in os.environ else u"┴─", 'white')
-                elif i == 4:
-                    screen += colored(u"┯" if "COLAB_GPU" in os.environ else u"┬─", 'white')
+                elif j == 0:
+                    if i == 9:
+                        screen += colored(u"┍" if is_colab else u"┌─", 'white')
+                    elif i > 0:
+                        screen += colored(u"┝" if is_colab else u"├─", 'white')
+                    else:
+                        screen += colored(u"┕" if is_colab else u"└─", 'white')
+                elif j < 8:
+                    if i%5 == 4:
+                        screen += colored(u"┯" if is_colab else u"┬─", 'white')
+                    elif i%5 > 0: 
+                        screen += colored(u"┿" if is_colab else u"┼─", 'white')
+                    else:
+                        screen += colored(u"┷" if is_colab else u"┴─", 'white')
                 else:
-                    screen += colored(u"┿" if "COLAB_GPU" in os.environ else u"┼─", 'white')
+                    if i == 9:
+                        screen += colored(u"┑" if is_colab else u"┐ ", 'white')
+                    elif i > 0:
+                        screen += colored(u"┥" if is_colab else u"┤ ", 'white')
+                    else:
+                        screen += colored(u"┙" if is_colab else u"┘ ", 'white')
+
             screen += colored(u"０１２３４５６７８９"[i], 'white') 
             screen += "\r\n" 
         screen += colored(u"　ＡＢＣＤＥＦＧＨＩ\r\n", 'white')
