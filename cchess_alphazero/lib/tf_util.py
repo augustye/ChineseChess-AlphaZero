@@ -7,8 +7,15 @@ def set_session_config(per_process_gpu_memory_fraction=None, allow_growth=None, 
 
     :return:
     """
+    import os
     import tensorflow as tf
     import keras.backend as K
+
+    if "COLAB_TPU_ADDR" in os.environ:
+        tpu_address = 'grpc://' + os.environ['COLAB_TPU_ADDR']
+        print('Init TPU session with TPU address:', tpu_address)
+        sess = tf.Session(tpu_address)
+        return K.set_session(sess)
 
     config = tf.ConfigProto(
         gpu_options=tf.GPUOptions(
